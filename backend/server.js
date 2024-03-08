@@ -6,13 +6,26 @@ const cors = require("cors");
 
 const app = express();
 
-const PORT = process.env.PORT || 5000;
-// conet to DB and start server
-mongoose.connect(process.env.MONGO_URI).then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server Running on PORT ${PORT} `);
-  });
-}).catch((err)=>{
-console.log(err);
+//Middlewares
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
-})
+//Routes
+app.get("/", (req, res) => {
+  res.send("Home Page");
+});
+
+// conet to DB and start server
+const PORT = process.env.PORT || 5000;
+
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server Running on PORT ${PORT} `);
+    });
+  })
+  .catch((err) => {
+    console.log(err);
+  });
