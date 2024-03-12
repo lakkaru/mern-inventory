@@ -1,31 +1,43 @@
 const dotenv = require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
 const cors = require("cors");
 const errorHandler = require("./middleware/errorMiddleware");
-
 const userRoutes = require("./routes/userRoutes");
+const multer = require("multer");
 
 const app = express();
 
-//Middlewares
+// Middlewares
 app.use(express.json());
+app.use(cors());
 app.use(express.urlencoded({ extended: false }));
-app.use(bodyParser.json());
 
-//Routes middleware
+// Multer middleware for handling form data
+const storage = multer.memoryStorage(); // You can customize storage as needed
+const upload = multer({ storage: storage });
+
+// Routes middleware
 app.use("/api/users", userRoutes);
 
-//Routes
-app.get("/", (req, res) => {
-  res.send("Home Page");
+// Example route for handling form data
+app.post("/upload", upload.single("file"), (req, res) => {
+  // Access form data using req.body
+  const name = req.body.name;
+  const age = req.body.age;
+
+  // Access uploaded file using req.file
+  const file = req.file;
+
+  // Your logic here with the form data and file
+
+  res.send("Form data received successfully");
 });
 
-//Error middleware
+// Error middleware
 app.use(errorHandler);
 
-// conet to DB and start server
+// Connect to DB and start server
 const PORT = process.env.PORT || 5000;
 
 mongoose

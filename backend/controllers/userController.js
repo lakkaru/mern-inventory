@@ -1,9 +1,10 @@
 const asyncHandler = require("express-async-handler"); // for error handling in async route handling with try catch
 const User = require("../models/userModel");
 
+
 const registerUser = asyncHandler(async (req, res) => {
-  console.log('Request Body:', req.body);
-  
+  console.log("Request Body:", JSON.stringify(req.body));
+
   const { name, email, password } = req.body;
 
   //validation
@@ -22,7 +23,7 @@ const registerUser = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Email has been alredy registered");
   }
-
+  
   //create the user
   const user = await User.create({
     name,
@@ -42,7 +43,7 @@ const registerUser = asyncHandler(async (req, res) => {
     });
   } else {
     res.status(400);
-    throw new Error("Invalid user");
+    throw new Error("Invalid user data");
   }
 });
 
