@@ -1,6 +1,11 @@
 const asyncHandler = require("express-async-handler"); // for error handling in async route handling with try catch
 const User = require("../models/userModel");
+const jwt = require("jsonwebtoken");
 
+//user token generation
+const generateTocken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1d" });
+};
 
 const registerUser = asyncHandler(async (req, res) => {
   console.log("Request Body:", JSON.stringify(req.body));
@@ -23,12 +28,24 @@ const registerUser = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Email has been alredy registered");
   }
-  
+
   //create the user
   const user = await User.create({
     name,
     email,
     password,
+  });
+
+  //generate tocken
+  const token = generateTocken(user._id);
+
+  //Send HTTP-only cookie
+  res.cookie("token", token, {
+    path: "/",
+    httpOnly: true,
+    expires: new Date(Date.now() + 1000 * 86400), //one day
+    sameSite: none,
+    secure: true,
   });
 
   if (user) {
@@ -40,6 +57,7 @@ const registerUser = asyncHandler(async (req, res) => {
       photo,
       phone,
       bio,
+      tocken,
     });
   } else {
     res.status(400);

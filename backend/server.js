@@ -4,18 +4,17 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const errorHandler = require("./middleware/errorMiddleware");
 const userRoutes = require("./routes/userRoutes");
-const multer = require("multer");
+const cookieParser = require("cookie-parser");
+const bodyParser = require("body-parser");
 
 const app = express();
 
 // Middlewares
 app.use(express.json());
-app.use(cors());
+app.use(cookieParser);
 app.use(express.urlencoded({ extended: false }));
-
-// Multer middleware for handling form data
-const storage = multer.memoryStorage(); // You can customize storage as needed
-const upload = multer({ storage: storage });
+app.use(bodyParser.json());
+app.use(cors());
 
 // Routes middleware
 app.use("/api/users", userRoutes);
