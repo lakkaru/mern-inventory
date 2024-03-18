@@ -11,7 +11,7 @@ const app = express();
 
 // Middlewares
 app.use(express.json());
-app.use(cookieParser);
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
@@ -21,7 +21,7 @@ app.use("/api/users", userRoutes);
 
 // Routes
 app.get("/", (req, res) => {
-    console.log('home');
+    // console.log('home');
     res.send("Home Page");
    
     
