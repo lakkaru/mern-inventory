@@ -19,6 +19,13 @@ app.use(cors());
 // Routes middleware
 app.use("/api/users", userRoutes);
 
+// Routes
+app.get("/", (req, res) => {
+    console.log('home');
+    res.send("Home Page");
+   
+    
+  });
 
 // Error middleware
 app.use(errorHandler);
