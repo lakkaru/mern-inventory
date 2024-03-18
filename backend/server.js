@@ -19,19 +19,6 @@ app.use(cors());
 // Routes middleware
 app.use("/api/users", userRoutes);
 
-// Example route for handling form data
-app.post("/upload", upload.single("file"), (req, res) => {
-  // Access form data using req.body
-  const name = req.body.name;
-  const age = req.body.age;
-
-  // Access uploaded file using req.file
-  const file = req.file;
-
-  // Your logic here with the form data and file
-
-  res.send("Form data received successfully");
-});
 
 // Error middleware
 app.use(errorHandler);
