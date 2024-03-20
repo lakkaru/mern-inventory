@@ -141,15 +141,88 @@ const getUser = asyncHandler(async (req, res) => {
       phone,
       bio,
     });
-  }else{
-    res.status(400)
-    throw new Error("User not found.")
+  } else {
+    res.status(400);
+    throw new Error("User not found.");
+  }
+});
+
+//Get login status
+const loginStatus = asyncHandler(async (req, res) => {
+  const token = req.cookies.tocken;
+  if (!token) {
+    return res.json(false);
+  }
+  //verify token
+  const verified = jwt.verify(token, process.env.JWT_SECRET);
+  if (verified) {
+    return res.json(true);
+  } else {
+    return res.json(false);
+  }
+});
+
+//Update user
+const updateUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+  if (user) {
+    const { name, email, photo, phone, bio } = user;
+    user.email = email;
+    user.name = req.body.name || name;
+    user.phone.body.phone || phone;
+    user.bio = req.body.bio || bio;
+    user.photo = req.body.photo || photo;
+
+    const updatedUser = await user.save();
+    res.status(200).json({
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      photo: updatedUser.photo,
+      phone: updatedUser.phone,
+      bio: updatedUser.bio,
+    });
+  } else {
+    res.status(404);
+    throw new Error("User not found");
+  }
+});
+
+//change password
+const changePassword = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+  const { oldPassword, password } = req.body;
+
+  if (!user) {
+    res.status(400);
+    throw new Error("User not found, please sign up");
+  }
+  //Validata
+  if (!oldPassword || !password) {
+    res.status(400);
+    throw new Error("Please add old and new password");
+  }
+
+  //Check if password matches db password
+  const passwordIsCorrect = await bcrypt.compare(oldPassword, user.password);
+
+  //Save new password
+  if (user && passwordIsCorrect) {
+    user.password = password;
+    await user.save();
+    res.status(200).send("password changed successfully.");
+  } else {
+    res.status(400);
+    throw new Error("Old password is incorrect.");
   }
 });
 
 module.exports = {
-  registerUser,
+  phonebioterUser,
   loginUser,
   logout,
   getUser,
+  loginStatus,
+  updateUser,
+  changePassword,
 };
